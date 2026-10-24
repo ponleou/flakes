@@ -11,7 +11,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "https://channels.nixos.org/nixpkgs-26.05/nixexprs.tar.zst";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi/main";
   };
 
