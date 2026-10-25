@@ -23,7 +23,10 @@
     } @ inputs:
     {
       nixosConfigurations.rpi4 = nixos-raspberrypi.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { 
+          inherit inputs; 
+          pubkeys = (import ./secrets/public.nix).pleiades;
+          };
         modules = [
           ./modules/rpi4
           ./pleiades/alcyone

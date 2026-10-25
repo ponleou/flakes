@@ -1,7 +1,4 @@
-{ ... }:
-let
-  pleiades = (import ../../secrets/public.nix).pleiades;
-in
+{ pubkeys, ... }:
 {
   users.users.star = {
     isNormalUser = true;
@@ -11,8 +8,8 @@ in
       "video"
     ];
     openssh.authorizedKeys.keys = [
-      pleiades.masterkey
-      pleiades.alcyone
+      pubkeys.masterkey
+      pubkeys.alcyone
     ];
     initialPassword = "";
   };
