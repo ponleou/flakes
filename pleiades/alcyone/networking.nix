@@ -8,22 +8,27 @@
   ];
 
   # creating a wifi wireless repeater
-  systemd.services.create-wlan1_ap-interface = {
-    description = "Create virtual AP interface for wlan1";
-    requires = [ "sys-subsystem-net-devices-wlan1.device" ];
-    after = [ "sys-subsystem-net-devices-wlan1.device" ];
+  systemd.services.create-wlp1s0u1_ap-interface = {
+    description = "Create virtual AP interface for wlp1s0u1";
+    requires = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
+    after = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "iw dev wlan1 interface add wlan1_ap type managed addr 7A:C0:3C:D8:4A:E6";
+      ExecStart = "iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
     };
+  };
+
+  systemd.services.hostapd.serviceConfig = {
+    Restart = lib.mkForce "always";
+    RestartSec = lib.mkForce "5";
   };
 
   services.hostapd = {
     enable = true;
 
-    radios.wlan1_ap = {
+    radios.wlp1s0u1_ap = {
       band = "5g";
       channel = 149; # or 36 (with 80 MHz width)
       countryCode = "US";
@@ -66,7 +71,7 @@
         operatingChannelWidth = "80";
       };
 
-      networks.wlan1_ap = {
+      networks.wlp1s0u1_ap = {
         ssid = "Skyfi-rpi";
         authentication = {
           mode = "wpa2-sha256";
@@ -98,7 +103,7 @@
     dhcpcd = {
       enable = true;
       setHostname = true;
-      extraConfig = "interface end0\nstatic ip_address=10.1.1.1/24\nstatic routers=10.1.1.1\nstatic domain_name_server=1.1.1.1 8.8.8.8\n\ninterface wlan1_ap\nstatic ip_address=10.1.2.1/24\nstatic routers=10.1.2.1\nstatic domain_name_server=8.8.8.8 8.8.4.4";
+      extraConfig = "interface end0\nstatic ip_address=10.1.1.1/24\nstatic routers=10.1.1.1\nstatic domain_name_server=1.1.1.1 8.8.8.8\n\ninterface wlp1s0u1_ap\nstatic ip_address=10.1.2.1/24\nstatic routers=10.1.2.1\nstatic domain_name_server=8.8.8.8 8.8.4.4";
     };
   };
 }
