@@ -16,7 +16,7 @@
 
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
+      ExecStart = "${pkgs.iw}/bin/iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
     };
   };
 
