@@ -20,9 +20,10 @@
       nixpkgs,
       nixos-raspberrypi,
       ...
-    }:
+    } @ inputs:
     {
       nixosConfigurations.rpi4 = nixos-raspberrypi.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
         modules = [
           ./modules/rpi4
           ./pleiades/alcyone
