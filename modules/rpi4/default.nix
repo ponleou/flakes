@@ -5,7 +5,6 @@
     raspberry-pi-4.bluetooth
 
     ./filesystem.nix
-    ./users.nix
   ];
 
   nix.settings.experimental-features = [

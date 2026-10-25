@@ -1,6 +1,9 @@
 { ... }:
+let
+  pleiades = (import ../../secrets/public.nix).pleiades;
+in
 {
-  users.users.access = {
+  users.users.star = {
     isNormalUser = true;
     extraGroups = [
       "networkmanager"
@@ -8,7 +11,8 @@
       "video"
     ];
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDacEJOQjxXOXVkoQ7RdIz9txNq69Lrqc2LE0EU/E3Wa masterkey@pleiades"
+      pleiades.masterkey
+      pleiades.alcyone
     ];
     initialPassword = "";
   };
