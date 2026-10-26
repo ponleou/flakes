@@ -118,8 +118,10 @@
   networking = {
     networkmanager = {
       enable = true;
-      unmanaged = ["interface-name:wlp1s0u1_ap" "interface-name:end0"];
+      unmanaged = ["interface-name:wlp1s0u1_ap" "interface-name:end0" "interface-name:wlan0"];
     };
+
+    firewall.enable = false; # TODO: setup firewall
 
     # assigning interfaces static ip
     interfaces = {
