@@ -113,10 +113,14 @@
     dnsmasq = {
       enable = true;
       settings = {
-        interface = "wlp1s0u1_ap";
+        interface = [
+          "wlp1s0u1_ap"
+          "end0"
+        ];
         domain-needed = true;
         dhcp-range = [
-          "10.1.2.50,10.1.2.254,255.255.255.0,12h"
+          "interface:wlp1s0u1_ap,10.1.2.50,10.1.2.254,255.255.255.0,12h"
+          "interface:end0,10.1.1.50,10.1.1.254,255.255.255.0,12h"
         ];
         server = [
           "8.8.8.8"
