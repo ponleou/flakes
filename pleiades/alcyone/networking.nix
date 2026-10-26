@@ -6,7 +6,7 @@
     dnsmasq
   ];
 
-  # creating a wifi wireless repeater
+  # creating a wifi wireless repeater (STA/AP)
   systemd.services.create-wlp1s0u1_ap-interface = {
     description = "Create virtual AP interface for wlp1s0u1";
     requires = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
@@ -31,7 +31,8 @@
 
       radios.wlp1s0u1_ap = {
         band = "5g";
-        channel = 149; # or 36 (with 80 MHz width)
+        channel = 36; # or 149 (with 80 MHz width) 
+        # NOTE: the current adapter needs to be on the same channel between ap and sta
         countryCode = "US";
         driver = "nl80211";
 
@@ -118,7 +119,11 @@
   networking = {
     networkmanager = {
       enable = true;
-      unmanaged = ["interface-name:wlp1s0u1_ap" "interface-name:end0" "interface-name:wlan0"];
+      unmanaged = [
+        "interface-name:wlp1s0u1_ap"
+        "interface-name:end0"
+        "interface-name:wlan0"
+      ];
     };
 
     firewall.enable = false; # TODO: setup firewall
