@@ -93,8 +93,10 @@
           beacon_int = 100;
           dtim_period = 1;
           he_bss_color = 37;
-          vht_oper_centr_freq_seg0_idx = 155;
-          he_oper_centr_freq_seg0_idx = 155;
+
+          # NOTE: these vht/he settings seem to pair with the channel
+          vht_oper_centr_freq_seg0_idx = 42;
+          he_oper_centr_freq_seg0_idx = 42;
         };
       };
     };
