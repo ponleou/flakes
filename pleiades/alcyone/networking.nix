@@ -7,29 +7,30 @@
   ];
 
   # creating a wifi wireless repeater (STA/AP)
-  systemd.services.create-wlp1s0u1_ap-interface = {
-    description = "Create virtual AP interface for wlp1s0u1";
-    requires = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
-    after = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
-    before = [ "NetworkManager.service" ];
-    wantedBy = [ "multi-user.target" ];
+  systemd.services = {
+    create-wlp1s0u1_ap-interface = {
+      description = "Create virtual AP interface for wlp1s0u1";
+      requires = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
+      after = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
+      before = [ "NetworkManager.service" ];
+      wantedBy = [ "multi-user.target" ];
 
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.iw}/bin/iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.iw}/bin/iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
+      };
     };
-  };
+    hostapd = {
+      # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
+      after = lib.mkAfter [
+        "NetworkManager-wait-online.service"
+        "network-online.target"
+      ];
 
-  systemd.services.hostapd = {
-    # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
-    after = lib.mkAfter [
-      "NetworkManager-wait-online.service"
-      "network-online.target"
-    ];
-
-    serviceConfig = {
-      Restart = lib.mkForce "always";
-      RestartSec = lib.mkForce "5";
+      serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = lib.mkForce "5";
+      };
     };
   };
 
@@ -126,6 +127,16 @@
           "8.8.8.8"
           "8.8.4.4"
         ];
+      };
+    };
+
+    # mdns client
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      publish = {
+        enable = true;
+        domain = true;
       };
     };
   };
