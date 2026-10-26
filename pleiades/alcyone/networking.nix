@@ -4,6 +4,8 @@
     iw
     hostapd
     dnsmasq
+    avahi
+    bind # for nslookup
   ];
 
   # creating a wifi wireless repeater (STA/AP)
@@ -123,6 +125,8 @@
           "interface:wlp1s0u1_ap,10.1.2.50,10.1.2.254,255.255.255.0,12h"
           "interface:end0,10.1.1.50,10.1.1.254,255.255.255.0,12h"
         ];
+
+        no-resolv = true; # resolv has the dns server from dhcp
         server = [
           "8.8.8.8"
           "8.8.4.4"
@@ -137,6 +141,7 @@
       publish = {
         enable = true;
         domain = true;
+        addresses = true;
       };
     };
   };
@@ -149,6 +154,9 @@
         "interface-name:end0"
         "interface-name:wlan0"
       ];
+
+      # use the local dnsmasq's dns server as main (ones provided by dhcp are still there)
+      insertNameservers = [ "127.0.0.1" ];
     };
 
     firewall = {
