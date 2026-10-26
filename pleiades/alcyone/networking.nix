@@ -20,9 +20,17 @@
     };
   };
 
-  systemd.services.hostapd.serviceConfig = {
-    Restart = lib.mkForce "always";
-    RestartSec = lib.mkForce "5";
+  systemd.services.hostapd = {
+    # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
+    after = lib.mkAfter [
+      "NetworkManager-wait-online.service"
+      "network-online.target"
+    ];
+
+    serviceConfig = {
+      Restart = lib.mkForce "always";
+      RestartSec = lib.mkForce "5";
+    };
   };
 
   services = {
@@ -31,8 +39,8 @@
 
       radios.wlp1s0u1_ap = {
         band = "5g";
-        channel = 36; # or 149 (with 80 MHz width) 
-        # NOTE: the current adapter needs to be on the same channel between ap and sta
+        # NOTE: the current wifi adapter cannot do sta/ap with sta and ap on different channels
+        channel = 36; # or 149 (with 80 MHz width)
         countryCode = "US";
         driver = "nl80211";
 
@@ -130,17 +138,30 @@
 
     firewall = {
       enable = true;
-      trustedInterfaces = ["end0" "wlp1s0u1_ap" ];
+      trustedInterfaces = [
+        "end0"
+        "wlp1s0u1_ap"
+      ];
       interfaces.wlp1s0u1 = {
-        allowedTCPPorts = [ 22 53 ]; # ssh, dns
-        allowedUDPPorts = [ 68 53 5353 ]; # dhcp res, dns, mdns (for hostname discovery)
+        allowedTCPPorts = [
+          22
+          53
+        ]; # ssh, dns
+        allowedUDPPorts = [
+          68
+          53
+          5353
+        ]; # dhcp res, dns, mdns (for hostname discovery)
       };
     };
 
     nat = {
       enable = true;
       externalInterface = "wlp1s0u1";
-      internalInterfaces = [ "end0" "wlp1s0u1_ap" ];
+      internalInterfaces = [
+        "end0"
+        "wlp1s0u1_ap"
+      ];
     };
 
     # assigning interfaces static ip
