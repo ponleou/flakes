@@ -128,7 +128,20 @@
       ];
     };
 
-    firewall.enable = false; # TODO: setup firewall
+    firewall = {
+      enable = true;
+      trustedInterfaces = ["end0" "wlp1s0u1_ap" ];
+      interfaces.wlp1s0u1 = {
+        allowedTCPPorts = [ 22 53 ]; # ssh, dns
+        allowedUDPPorts = [ 68 53 5353 ]; # dhcp res, dns, mdns (for hostname discovery)
+      };
+    };
+
+    nat = {
+      enable = true;
+      externalInterface = "wlp1s0u1";
+      internalInterfaces = [ "end0" "wlp1s0u1_ap" ];
+    };
 
     # assigning interfaces static ip
     interfaces = {
