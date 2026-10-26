@@ -102,15 +102,10 @@
     dnsmasq = {
       enable = true;
       settings = {
-        interface = [
-          "end0"
-          "wlp1s0u1_ap"
-        ];
+        interface = "wlp1s0u1_ap";
         domain-needed = true;
-        bind-interfaces = true;
         dhcp-range = [
-          "end0,10.1.1.50,10.1.1.254,255.255.255.0,12h"
-          "wlp1s0u1_ap,10.1.2.50,10.1.2.254,255.255.255.0,12h"
+          "10.1.2.50,10.1.2.254,255.255.255.0,12h"
         ];
         server = [
           "8.8.8.8"
@@ -121,7 +116,10 @@
   };
 
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      unmanaged = ["interface-name:wlp1s0u1_ap" "interface-name:end0"];
+    };
 
     # assigning interfaces static ip
     interfaces = {
