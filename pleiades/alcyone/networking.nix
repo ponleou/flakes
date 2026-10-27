@@ -24,10 +24,8 @@
     };
     hostapd = {
       # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
-      after = lib.mkAfter [
-        "NetworkManager-wait-online.service"
-        "network-online.target"
-      ];
+      wants = [ "network-online.target" ];
+      after = lib.mkAfter [ "network-online.target" ];
 
       serviceConfig = {
         Restart = lib.mkForce "always";
