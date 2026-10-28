@@ -12,5 +12,6 @@
       pubkeys.alcyone
     ];
     initialPassword = "";
+    uid = 1003; # pinned cus mounted ntfs drives in drive.nix
   };
 }
