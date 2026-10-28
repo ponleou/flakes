@@ -25,7 +25,7 @@
       nixosConfigurations.rpi4 = nixos-raspberrypi.lib.nixosSystem {
         specialArgs = { 
           inherit inputs; 
-          pubkeys = (import ./secrets/public.nix).pleiades;
+          pubkeys = (import ./constants/pubkeys.nix).pleiades;
           };
         modules = [
           ./modules/rpi4
