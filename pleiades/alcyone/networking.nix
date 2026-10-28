@@ -1,4 +1,7 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, constants, ... }:
+let 
+  networking = constants.alcyone.networking;
+in 
 {
   environment.systemPackages = with pkgs; [
     iw
@@ -7,18 +10,18 @@
 
   # creating a wifi wireless repeater (STA/AP)
   systemd.services = {
-    create-wlp1s0u1_ap-interface = {
-      description = "Create virtual AP interface for wlp1s0u1";
-      requires = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
-      after = [ "sys-subsystem-net-devices-wlp1s0u1.device" ];
+    "create-${networking.apInterface}-interface" = {
+      description = "Create virtual AP interface for ${networking.staInterface}";
+      requires = [ "sys-subsystem-net-devices-${networking.staInterface}.device" ];
+      after = [ "sys-subsystem-net-devices-${networking.staInterface}.device" ];
       before = [ "NetworkManager.service" ];
       wantedBy = [ "multi-user.target" ];
 
-      unitConfig.ConditionPathExists = "!/sys/class/net/wlp1s0u1_ap";
+      unitConfig.ConditionPathExists = "!/sys/class/net/${networking.apInterface}";
 
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.iw}/bin/iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
+        ExecStart = "${pkgs.iw}/bin/iw dev ${networking.staInterface} interface add ${networking.apInterface} type managed addr ${networking.apMacAddress}";
       };
     };
     
@@ -38,7 +41,7 @@
     hostapd = {
       enable = true;
 
-      radios.wlp1s0u1_ap = {
+      radios.${networking.apInterface} = {
         band = "5g";
         # NOTE: the current wifi adapter cannot do sta/ap with sta and ap on different channels
         channel = 36; # or 149 (with 80 MHz width)
@@ -82,7 +85,7 @@
           operatingChannelWidth = "80";
         };
 
-        networks.wlp1s0u1_ap = {
+        networks.${networking.apInterface} = {
           ssid = "Skyfi-rpi";
           authentication = {
             mode = "wpa2-sha256";
@@ -115,13 +118,13 @@
       enable = true;
       settings = {
         interface = [
-          "wlp1s0u1_ap"
-          "end0"
+          "${networking.apInterface}"
+          "${networking.ethInterface}"
         ];
         domain-needed = true;
         dhcp-range = [
-          "interface:wlp1s0u1_ap,10.1.2.50,10.1.2.254,255.255.255.0,12h"
-          "interface:end0,10.1.1.50,10.1.1.254,255.255.255.0,12h"
+          "interface:${networking.apInterface},10.1.2.50,10.1.2.254,255.255.255.0,12h"
+          "interface:${networking.ethInterface},10.1.1.50,10.1.1.254,255.255.255.0,12h"
         ];
 
         no-resolv = true; # resolv has the dns server from dhcp
@@ -148,8 +151,8 @@
     networkmanager = {
       enable = true;
       unmanaged = [
-        "interface-name:wlp1s0u1_ap"
-        "interface-name:end0"
+        "interface-name:${networking.apInterface}"
+        "interface-name:${networking.ethInterface}"
         "interface-name:wlan0"
       ];
 
@@ -160,10 +163,10 @@
     firewall = {
       enable = true;
       trustedInterfaces = [
-        "end0"
-        "wlp1s0u1_ap"
+        "${networking.ethInterface}"
+        "${networking.apInterface}"
       ];
-      interfaces.wlp1s0u1 = {
+      interfaces.${networking.staInterface} = {
         allowedTCPPorts = [
           22
           53
@@ -178,23 +181,23 @@
 
     nat = {
       enable = true;
-      externalInterface = "wlp1s0u1";
+      externalInterface = "${networking.staInterface}";
       internalInterfaces = [
-        "end0"
-        "wlp1s0u1_ap"
+        "${networking.ethInterface}"
+        "${networking.apInterface}"
       ];
     };
 
     # assigning interfaces static ip
     interfaces = {
-      end0.ipv4.addresses = [
+      ${networking.ethInterface}.ipv4.addresses = [
         {
           address = "10.1.1.1";
           prefixLength = 24;
         }
       ];
 
-      wlp1s0u1_ap.ipv4.addresses = [
+      ${networking.apInterface}.ipv4.addresses = [
         {
           address = "10.1.2.1";
           prefixLength = 24;
