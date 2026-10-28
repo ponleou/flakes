@@ -2,9 +2,6 @@
 {
   environment.systemPackages = with pkgs; [
     iw
-    hostapd
-    dnsmasq
-    avahi
     bind # for nslookup
   ];
 
@@ -17,11 +14,14 @@
       before = [ "NetworkManager.service" ];
       wantedBy = [ "multi-user.target" ];
 
+      unitConfig.ConditionPathExists = "!/sys/class/net/wlp1s0u1_ap";
+
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${pkgs.iw}/bin/iw dev wlp1s0u1 interface add wlp1s0u1_ap type managed addr 7A:C0:3C:D8:4A:E6";
       };
     };
+    
     hostapd = {
       # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
       wants = [ "network-online.target" ];
