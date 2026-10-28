@@ -18,8 +18,8 @@ in
       server = {
         DOMAIN = "git.example.com"; # TODO: replace example domain
         ROOT_URL = "https://${srv.DOMAIN}/";
-        HTTP_PORT = 3000;
-        SSH_PORT = 2222;
+        HTTP_PORT = 3000; # TODO: open firewall
+        SSH_DOMAIN = "${config.services.avahi.hostName}.${config.services.avahi.domainName}"; # NOTE: ssh is only available locally
         LANDING_PAGE = "explore";
       };
       service.DISABLE_REGISTRATION = true; # TODO: temporary allow to create admin user (first user is admin)
