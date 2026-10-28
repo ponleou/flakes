@@ -3,6 +3,7 @@
   imports = [
     ./users.nix
     ./networking.nix
+    ./drive.nix
   ];
 
   networking.hostName = "alcyone";

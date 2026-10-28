@@ -26,6 +26,7 @@
         specialArgs = { 
           inherit inputs; 
           pubkeys = (import ./constants/pubkeys.nix).pleiades;
+          constants = (import ./constants).pleiades;
           };
         modules = [
           ./modules/rpi4
