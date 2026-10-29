@@ -1,11 +1,11 @@
 { config, constants, ... }:
 let
-  drive = constants.alcyone.drive;
+  var = constants.alcyone.drive;
 in
 {
   fileSystems = {
-    "/${drive.root}/${drive.main}" = {
-      device = "/dev/disk/by-label/${drive.main}";
+    "/${var.root}/${var.main}" = {
+      device = "/dev/disk/by-label/${var.main}";
       fsType = "ext4";
       options = [
         "nofail"
@@ -14,8 +14,8 @@ in
       ];
     };
 
-    "/${drive.root}/${drive.storage}" = {
-      device = "/dev/disk/by-label/${drive.storage}";
+    "/${var.root}/${var.storage}" = {
+      device = "/dev/disk/by-label/${var.storage}";
       fsType = "ntfs";
       options = [
         "nofail"

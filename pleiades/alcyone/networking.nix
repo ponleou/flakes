@@ -1,7 +1,12 @@
-{ lib, pkgs, constants, ... }:
-let 
+{
+  lib,
+  pkgs,
+  constants,
+  ...
+}:
+let
   networking = constants.alcyone.networking;
-in 
+in
 {
   environment.systemPackages = with pkgs; [
     iw
@@ -24,7 +29,7 @@ in
         ExecStart = "${pkgs.iw}/bin/iw dev ${networking.staInterface} interface add ${networking.apInterface} type managed addr ${networking.apMacAddress}";
       };
     };
-    
+
     hostapd = {
       # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
       wants = [ "network-online.target" ];
