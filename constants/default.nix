@@ -12,6 +12,10 @@
         apMacAddress = "7A:C0:3C:D8:4A:E6";
         ethInterface = "end0";
       };
+      forgejo = {
+        port = 3000;
+        anubisPort = 3001;
+      };
     };
   };
 }
