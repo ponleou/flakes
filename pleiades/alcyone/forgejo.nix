@@ -50,6 +50,7 @@ in
           BIND = "localhost:${toString var.anubisPort}";
           TARGET = "http://localhost:${toString forgejoSrv.HTTP_PORT}";
           CUSTOM_REAL_IP_HEADER = "CF-Connecting-IP"; # using with cloudflare tunnel
+          COOKIE_EXPIRATION_TIME = "12h";
         };
         policy = {
           extraBots = [

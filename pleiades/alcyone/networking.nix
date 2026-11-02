@@ -134,8 +134,8 @@ in
 
         no-resolv = true; # resolv has the dns server from dhcp
         server = [
-          "8.8.8.8"
-          "8.8.4.4"
+          "1.1.1.1"
+          "1.0.0.1"
         ];
       };
     };
