@@ -1,7 +1,7 @@
 {
   config,
   constants,
-  pkgs,
+  domain,
   ...
 }:
 let
@@ -11,14 +11,18 @@ let
   var = constants.alcyone.forgejo;
 in
 {
-  environment.systemPackages = with pkgs; [
-    cloudflared
-  ];
-
   services = {
     cloudflared = {
       enable = true;
-
+      tunnels."43d5048d-84d0-46b5-9029-16906ec0cd1a" = {
+        credentialsFile = "/etc/cloudflared/forgejo-cred.json";
+        default = "http_status:404";
+        ingress = {
+          "forge.${domain.apex}" = "http://localhost"; # pointing to nginx
+          "ssh.${domain.apex}" = "ssh://localhost:${toString var.sshPort}";
+        };
+        
+      };
     };
 
     nginx = {
@@ -93,12 +97,15 @@ in
       lfs.enable = true; # by default, large files go to {stateDir}/data/lfs
       settings = {
         server = {
-          DOMAIN = "git.example.com"; # TODO: replace example domain
+          DOMAIN = "forge.${domain.apex}"; 
           ROOT_URL = "https://${forgejoSrv.DOMAIN}/";
-          HTTP_PORT = var.port; # TODO: open firewall
-          SSH_DOMAIN = "${config.services.avahi.hostName}.${config.services.avahi.domainName}"; # NOTE: ssh is only available locally # TODO: change to domain name
-          SSH_LISTEN_PORT = 2222;
+          HTTP_PORT = var.port; 
+
+          # NOTE: ssh over cloudflare tunnels doesnt work natively
+          SSH_DOMAIN = "ssh.${domain.apex}";
+          SSH_LISTEN_PORT = var.sshPort;
           START_SSH_SERVER = true;
+
           LANDING_PAGE = "explore";
         };
         service.DISABLE_REGISTRATION = true; # TODO: temporary allow to create admin user (first user is admin)
