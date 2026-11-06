@@ -1,4 +1,5 @@
 {
+  lib,
   config,
   constants,
   domain,
@@ -119,6 +120,16 @@ in
           THEMES = "catppuccin-rosewater-auto,catppuccin-flamingo-auto,catppuccin-pink-auto,catppuccin-mauve-auto,catppuccin-red-auto,catppuccin-maroon-auto,catppuccin-peach-auto,catppuccin-yellow-auto,catppuccin-green-auto,catppuccin-teal-auto,catppuccin-sky-auto,catppuccin-sapphire-auto,catppuccin-blue-auto,catppuccin-lavender-auto";
         };
       };
+    };
+  };
+
+  # cf tunnel keeps trying to start before local dns server (by dnsmasq)
+  systemd.services."cloudflared-tunnel-43d5048d-84d0-46b5-9029-16906ec0cd1a" = {
+    wants = lib.mkAfter [ "dnsmasq.service" ];
+    after = lib.mkAfter [ "dnsmasq.service" ];
+
+    serviceConfig = {
+      RestartSec = lib.mkForce "5";
     };
   };
 

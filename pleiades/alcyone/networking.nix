@@ -32,7 +32,7 @@ in
 
     hostapd = {
       # on the rpi4, network manager cant connect when hostapd is up, it seems to differ from device to device
-      wants = [ "network-online.target" ];
+      wants = lib.mkAfter [ "network-online.target" ];
       after = lib.mkAfter [ "network-online.target" ];
 
       serviceConfig = {
