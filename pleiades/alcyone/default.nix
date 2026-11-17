@@ -5,6 +5,7 @@
     ./networking.nix
     ./drive.nix
     ./forgejo.nix
+    ./misc.nix
   ];
 
   networking.hostName = "alcyone";
